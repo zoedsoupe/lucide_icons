@@ -12,7 +12,7 @@ You can find the original docs [here](https://lucide.dev/docs) and repo [here](h
 
 Add `lucide_icons` to the list of dependencies in `mix.exs`:
 
-```elixir
+```elixir dark
 def deps do
   [
     {:lucide_icons, "~> 0.1.0"}
@@ -24,14 +24,14 @@ Then run `mix deps.get`.
 
 ## Usage
 
-#### With Heex
+#### With Eex or Leex
 
-```elixir
-<Lucideicons.icon name="academic-cap" type="outline" class="h-4 w-4" />
+```elixir dark
+<%= Lucideicons.icon("academic-cap", type: "outline", class: "h-4 w-4") %>
 ```
 
-#### With Surface
+#### With Heex
 
-```elixir
-<Lucideicons.Surface.Icon name="academic-cap" type="outline" class="h-4 w-4" />
+```elixir dark
+<Lucideicons.LiveView.icon name="academic-cap" type="outline" class="h-4 w-4" />
 ```
