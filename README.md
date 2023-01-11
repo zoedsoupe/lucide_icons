@@ -35,11 +35,3 @@ Then run `mix deps.get`.
 ```elixir
 <Lucideicons.Surface.Icon name="academic-cap" type="outline" class="h-4 w-4" />
 ```
-
-## Config
-
-Defaults can be set in the `Lucideicons` application configuration.
-
-```elixir
-config :lucide_icons, type: "outline"
-```
