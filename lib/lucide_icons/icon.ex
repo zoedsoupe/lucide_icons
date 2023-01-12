@@ -30,13 +30,16 @@ defmodule Lucideicons.Icon do
       |> Enum.at(-1)
       |> String.split(".", trim: true)
       |> List.first()
+      |> String.replace("-", "_")
+      |> String.to_atom()
 
     struct!(__MODULE__, file: file, name: name)
   end
 
   @doc "Converts opts to HTML attributes"
-  @spec opts_to_attrs(keyword) :: list
-  def opts_to_attrs(opts) do
+  @spec opts_to_attrs(map) :: list
+  def opts_to_attrs(assigns) do
+    opts = Map.delete(assigns, :__changed__)
     for {key, value} <- opts do
       key =
         key
