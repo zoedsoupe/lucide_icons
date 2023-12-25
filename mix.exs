@@ -26,7 +26,7 @@ defmodule Lucideicons.MixProject do
 
   defp deps do
     [
-      {:phoenix_html, "~> 3.2"},
+      {:phoenix_html, "~> 3.2 or ~> 4.0"},
       {:phoenix_live_view, "~> 0.17", optional: true},
       {:ex_doc, "~> 0.27", only: :dev, runtime: false}
     ]
