@@ -25,4 +25,8 @@ lucide_icons-*.tar
 # Temporary files, for example, from tests.
 /tmp/
 
-/priv/node_modules/
+/priv/node_modules/*
+!/priv/node_modules/lucide-static/
+
+/priv/node_modules/lucide-static/*
+!/priv/node_modules/lucide-static/icons/
