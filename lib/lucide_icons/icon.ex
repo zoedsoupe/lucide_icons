@@ -40,6 +40,7 @@ defmodule Lucideicons.Icon do
   @spec opts_to_attrs(map) :: list
   def opts_to_attrs(assigns) do
     opts = Map.delete(assigns, :__changed__)
+
     for {key, value} <- opts do
       key =
         key
@@ -53,9 +54,15 @@ defmodule Lucideicons.Icon do
     end
   end
 
+  @license "<!-- @license lucide-static v0.365.0 - ISC -->\n"
+
   @doc "Inserts HTML attributes into an SVG icon"
   @spec insert_attrs(binary, keyword) :: Phoenix.HTML.safe()
   def insert_attrs("<svg" <> rest, attrs) do
     Phoenix.HTML.raw(["<svg", attrs, rest])
+  end
+
+  def insert_attrs(<<@license, rest::binary>>, attrs) do
+    insert_attrs(rest, attrs)
   end
 end
