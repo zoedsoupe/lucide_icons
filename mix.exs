@@ -1,7 +1,7 @@
 defmodule Lucideicons.MixProject do
   use Mix.Project
 
-  @version "1.1.0"
+  @version "1.1.1"
   @github_url "https://github.com/zoedsoupe/lucide_icons"
 
   def project do
@@ -26,8 +26,8 @@ defmodule Lucideicons.MixProject do
 
   defp deps do
     [
-      {:phoenix_html, "~> 3.2"},
-      {:phoenix_live_view, "~> 0.17", optional: true},
+      {:phoenix_html, "~> 4.0"},
+      {:phoenix_live_view, "~> 0.20"},
       {:ex_doc, "~> 0.27", only: :dev, runtime: false}
     ]
   end

@@ -1,49 +1,41 @@
 {
-  inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixos-22.11";
+  inputs = {
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-23.11";
+    flake-parts.url = "github:hercules-ci/flake-parts";
+    systems.url = "github:nix-systems/default";
+  };
 
-  outputs = { self, nixpkgs }:
-    let
-      systems = {
-        linux = "x86_64-linux";
-        darwin = "aarch64-darwin";
-      };
-
-      pkgs = system: import nixpkgs {
-        inherit system;
-        config.allowUnfree = true;
-      };
-
-      inputs = sys: with pkgs sys; [
-        gnumake
-        gcc
-        readline
-        openssl
-        zlib
-        libxml2
-        curl
-        libiconv
-        elixir_1_14
-        glibcLocales
-        yarn
-      ] ++ lib.optional stdenv.isLinux [
-        inotify-tools
-        gtk-engine-murrine
-      ] ++ lib.optional stdenv.isDarwin [
-        darwin.apple_sdk.frameworks.CoreServices
-        darwin.apple_sdk.frameworks.CoreFoundation
-      ];
-    in
-    rec {
-      devShells = {
-        "${systems.linux}".default = with pkgs systems.linux; mkShell {
-          name = "lucide_icons";
-          buildInputs = inputs systems.linux;
+  outputs = {
+    flake-parts,
+    systems,
+    ...
+  } @ inputs:
+    flake-parts.lib.mkFlake {inherit inputs;} {
+      systems = import systems;
+      perSystem = {
+        pkgs,
+        system,
+        ...
+      }: let
+        inherit (pkgs.beam.interpreters) erlangR26;
+        inherit (pkgs.beam) packagesWith;
+        beam = packagesWith erlangR26;
+      in {
+        _module.args.pkgs = import inputs.nixpkgs {
+          inherit system;
+          config.allowUnfree = true;
         };
-
-        "${systems.darwin}".default = with pkgs systems.darwin; mkShell {
-          name = "lucide_icons";
-          buildInputs = inputs systems.darwin;
-        };
+        devShells.default = with pkgs;
+          mkShell {
+            name = "lucide-icons";
+            packages = with pkgs;
+              [beam.elixir_1_16 zlib]
+              ++ lib.optional stdenv.isLinux [inotify-tools]
+              ++ lib.optional stdenv.isDarwin [
+                darwin.apple_sdk.frameworks.CoreServices
+                darwin.apple_sdk.frameworks.CoreFoundation
+              ];
+          };
       };
     };
 }
