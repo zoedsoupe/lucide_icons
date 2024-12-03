@@ -1,50 +1,99 @@
-name: CI
+name: ci
 
 on:
-  pull_request:
   push:
-    branches:
-      - main
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
 
 jobs:
-  mix_test:
-    name: mix test (Elixir ${{matrix.elixir}} | Erlang/OTP ${{matrix.otp}})
+  lint:
     runs-on: ubuntu-latest
+    env:
+      MIX_ENV: dev
     strategy:
-      fail-fast: false
       matrix:
-        include:
-          - elixir: 1.13.4
-            otp: 24.0
-          - elixir: 1.13.4
-            otp: 25.0
-            check_formatted: true
-            run_plugin_tests: true
-            warnings_as_errors: true
-          - elixir: 1.14.0
-            otp: 25.0
-            check_formatted: true
-            run_plugin_tests: true
-            warnings_as_errors: true
+        otp: [27.0]
+        elixir: [1.17.3]
+    steps:
+      - uses: actions/checkout@v4
+      
+      - uses: erlef/setup-beam@v1
+        with:
+          otp-version: ${{ matrix.otp }}
+          elixir-version: ${{ matrix.elixir }}
+
+      - name: Cache Elixir deps
+        uses: actions/cache@v1
+        id: deps-cache
+        with:
+          path: deps
+          key: ${{ runner.os }}-mix-${{ env.MIX_ENV }}-${{ hashFiles(format('{0}{1}', github.workspace, '/mix.lock')) }}
+
+      - name: Cache Elixir _build
+        uses: actions/cache@v1
+        id: build-cache
+        with:
+          path: _build
+          key: ${{ runner.os }}-build-${{ env.MIX_ENV }}-${{ matrix.otp }}-${{ matrix.elixir }}-${{ hashFiles(format('{0}{1}', github.workspace, '/mix.lock')) }}
+
+      - name: Install deps
+        if: steps.deps-cache.outputs.cache-hit != 'true'
+        run: |
+          mix local.rebar --force
+          mix local.hex --force
+          mix deps.get --only ${{ env.MIX_ENV }}
+
+      - name: Compile deps
+        if: steps.build-cache.outputs.cache-hit != 'true'
+        run: mix deps.compile --warnings-as-errors
+
+      - name: Run compiler checks
+        run: mix clean && mix compile --force --warning-as-errors
+
+      - name: Run formatter check
+        run: mix format --check-formatted
+
+  test:
+    runs-on: ubuntu-latest
     env:
       MIX_ENV: test
+    strategy:
+      matrix:
+        otp: [27.0]
+        elixir: [1.17.3]
     steps:
-      - uses: actions/checkout@v2.3.2
-      - uses: actions/setup-elixir@v1.5.0
+      - uses: actions/checkout@v4
+
+      - uses: erlef/setup-beam@v1
         with:
-          otp-version: ${{matrix.otp}}
-          elixir-version: ${{matrix.elixir}}
-          experimental-otp: true
-      - name: Install packages
+          otp-version: ${{ matrix.otp }}
+          elixir-version: ${{ matrix.elixir }}
+
+      - name: Cache Elixir deps
+        uses: actions/cache@v1
+        id: deps-cache
+        with:
+          path: deps
+          key: ${{ runner.os }}-mix-${{ env.MIX_ENV }}-${{ hashFiles(format('{0}{1}', github.workspace, '/mix.lock')) }}
+
+      - name: Cache Elixir _build
+        uses: actions/cache@v1
+        id: build-cache
+        with:
+          path: _build
+          key: ${{ runner.os }}-build-${{ env.MIX_ENV }}-${{ matrix.otp }}-${{ matrix.elixir }}-${{ hashFiles(format('{0}{1}', github.workspace, '/mix.lock')) }}
+
+      - name: Install deps
+        if: steps.deps-cache.outputs.cache-hit != 'true'
         run: |
-          sudo apt-get install -y -qq inotify-tools
-      - name: Install Dependencies
-        run: |
-          mix local.hex --force
           mix local.rebar --force
-          mix deps.get --only test
-      - run: mix format --check-formatted
-        if: matrix.check_formatted
-      - run: mix compile --warnings-as-errors
-        if: matrix.warnings_as_errors
-      - run: mix test
+          mix local.hex --force
+          mix deps.get --only ${{ env.MIX_ENV }}
+
+      - name: Compile deps
+        if: steps.build-cache.outputs.cache-hit != 'true'
+        run: mix deps.compile --warnings-as-errors
+
+      - name: Run tests
+        run: mix test
