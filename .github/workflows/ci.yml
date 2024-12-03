@@ -95,5 +95,8 @@ jobs:
         if: steps.build-cache.outputs.cache-hit != 'true'
         run: mix deps.compile --warnings-as-errors
 
+      - name: Compile app
+        run: mix compile --force --warnings-as-errors
+
       - name: Run tests
         run: mix test
