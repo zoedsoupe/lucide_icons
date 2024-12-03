@@ -1,6 +1,6 @@
 {
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-23.11";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.11";
     flake-parts.url = "github:hercules-ci/flake-parts";
     systems.url = "github:nix-systems/default";
   };
@@ -17,9 +17,9 @@
         system,
         ...
       }: let
-        inherit (pkgs.beam.interpreters) erlangR26;
+        inherit (pkgs.beam.interpreters) erlang_27;
         inherit (pkgs.beam) packagesWith;
-        beam = packagesWith erlangR26;
+        beam = packagesWith erlang_27;
       in {
         _module.args.pkgs = import inputs.nixpkgs {
           inherit system;
@@ -29,7 +29,7 @@
           mkShell {
             name = "lucide-icons";
             packages = with pkgs;
-              [beam.elixir_1_16 zlib]
+              [beam.elixir erlang_27 zlib nodejs yarn]
               ++ lib.optional stdenv.isLinux [inotify-tools]
               ++ lib.optional stdenv.isDarwin [
                 darwin.apple_sdk.frameworks.CoreServices

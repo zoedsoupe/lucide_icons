@@ -15,7 +15,7 @@ Add `lucide_icons` to the list of dependencies in `mix.exs`:
 ```elixir dark
 def deps do
   [
-    {:lucide_icons, "~> 1.0.0"}
+    {:lucide_icons, "~> 1.1"}
   ]
 end
 ```
@@ -32,4 +32,4 @@ Then run `mix deps.get`.
 
 where `alert_triangle` refers to a specific icon name.
 
-> Icon names can be retrieved from `Lucideicons.icon_names/1`
+> Icon names can be retrieved from `Lucideicons.icon_names/0`

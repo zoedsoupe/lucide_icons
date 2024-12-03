@@ -17,6 +17,14 @@ defmodule Lucideicons.Icon do
   @enforce_keys @fields
   defstruct @fields
 
+  @lucide_static_version :code.priv_dir(:lucide_icons)
+                         |> List.to_string()
+                         |> Path.join("package.json")
+                         |> File.read!()
+                         |> then(&Regex.run(~r/\~[0-9\.]+/, &1))
+                         |> hd()
+                         |> String.replace("~", "")
+
   @type t :: %Lucideicons.Icon{file: binary, name: String.t()}
 
   @doc "Parses a SVG file and returns structured data"
@@ -54,7 +62,7 @@ defmodule Lucideicons.Icon do
     end
   end
 
-  @license "<!-- @license lucide-static v0.365.0 - ISC -->\n"
+  @license "<!-- @license lucide-static v#{@lucide_static_version} - ISC -->\n"
 
   @doc "Inserts HTML attributes into an SVG icon"
   @spec insert_attrs(binary, keyword) :: Phoenix.HTML.safe()
