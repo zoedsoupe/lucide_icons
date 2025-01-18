@@ -17,13 +17,20 @@ defmodule Lucideicons.Icon do
   @enforce_keys @fields
   defstruct @fields
 
+  @json (cond do
+           Code.ensure_loaded?(JSON) -> JSON
+           Code.ensure_loaded?(Jason) -> Jason
+           true -> raise "need a JSON library available, either JSON or Jason"
+         end)
+
   @lucide_static_version :code.priv_dir(:lucide_icons)
                          |> List.to_string()
                          |> Path.join("package.json")
+                         |> Path.expand()
                          |> File.read!()
-                         |> then(&Regex.run(~r/\~[0-9\.]+/, &1))
-                         |> hd()
-                         |> String.replace("~", "")
+                         |> @json.decode!()
+                         |> get_in(["dependencies", "lucide-static"])
+                         |> String.replace(~r/\>\=\s/, "")
 
   @type t :: %Lucideicons.Icon{file: binary, name: String.t()}
 

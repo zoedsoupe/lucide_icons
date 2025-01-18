@@ -10,12 +10,15 @@ You can find the original docs [here](https://lucide.dev/docs) and repo [here](h
 
 ## Installation
 
+> ![WARNING]
+> Since version 2.0 ths library only support phoenix_live_view v1.0+
+
 Add `lucide_icons` to the list of dependencies in `mix.exs`:
 
 ```elixir dark
 def deps do
   [
-    {:lucide_icons, "~> 1.1"}
+    {:lucide_icons, "~> 2.0"}
   ]
 end
 ```
