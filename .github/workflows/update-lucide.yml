@@ -28,6 +28,25 @@ jobs:
           otp-version: '27.3'
           elixir-version: '1.19.0-rc.0'
       
+      - name: Cache Elixir deps
+        uses: actions/cache@v4
+        id: deps-cache
+        with:
+          path: deps
+          key: ${{ runner.os }}-mix-dev-${{ hashFiles('**/mix.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-mix-dev-
+      
+      - name: Cache Elixir _build
+        uses: actions/cache@v4
+        id: build-cache
+        with:
+          path: _build
+          key: ${{ runner.os }}-build-dev-27.3-1.19.0-rc.0-${{ hashFiles('**/mix.lock') }}-${{ hashFiles('priv/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-build-dev-27.3-1.19.0-rc.0-${{ hashFiles('**/mix.lock') }}-
+            ${{ runner.os }}-build-dev-27.3-1.19.0-rc.0-
+      
       - name: Install dependencies
         run: |
           mix local.rebar --force
@@ -89,11 +108,22 @@ jobs:
       
       - name: Cache Elixir deps
         uses: actions/cache@v4
+        id: deps-cache-create-pr
         with:
           path: deps
-          key: ${{ runner.os }}-mix-${{ hashFiles('**/mix.lock') }}
+          key: ${{ runner.os }}-mix-${{ env.MIX_ENV }}-${{ hashFiles('**/mix.lock') }}
           restore-keys: |
-            ${{ runner.os }}-mix-
+            ${{ runner.os }}-mix-${{ env.MIX_ENV }}-
+      
+      - name: Cache Elixir _build
+        uses: actions/cache@v4
+        id: build-cache-create-pr
+        with:
+          path: _build
+          key: ${{ runner.os }}-build-${{ env.MIX_ENV }}-27.3-1.19.0-rc.0-${{ hashFiles('**/mix.lock') }}-${{ hashFiles('priv/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-build-${{ env.MIX_ENV }}-27.3-1.19.0-rc.0-${{ hashFiles('**/mix.lock') }}-
+            ${{ runner.os }}-build-${{ env.MIX_ENV }}-27.3-1.19.0-rc.0-
       
       - name: Install dependencies
         run: |
