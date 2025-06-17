@@ -26,3 +26,5 @@ lucide_icons-*.tar
 /tmp/
 
 /priv/node_modules/
+
+.env
