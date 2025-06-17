@@ -25,12 +25,11 @@ defmodule Lucideicons.Icon do
 
   @lucide_static_version :code.priv_dir(:lucide_icons)
                          |> List.to_string()
-                         |> Path.join("package.json")
+                         |> Path.join("package-lock.json")
                          |> Path.expand()
                          |> File.read!()
                          |> @json.decode!()
-                         |> get_in(["dependencies", "lucide-static"])
-                         |> String.replace(~r/\>\=\s/, "")
+                         |> get_in(["packages", "node_modules/lucide-static", "version"])
 
   @type t :: %Lucideicons.Icon{file: binary, name: String.t()}
 
