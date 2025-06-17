@@ -74,7 +74,7 @@ defmodule Lucideicons do
   @spec search_icons(String.t()) :: [atom()]
   def search_icons(search_term) do
     search = String.downcase(search_term)
-    
+
     @icon_names
     |> Enum.filter(fn icon_name ->
       icon_name
@@ -87,7 +87,7 @@ defmodule Lucideicons do
 
   for %Icon{name: name, file: file} <- icons do
     icon_name_string = name |> to_string() |> String.replace("_", "-")
-    
+
     @doc """
     Renders the `#{icon_name_string}` icon.
 

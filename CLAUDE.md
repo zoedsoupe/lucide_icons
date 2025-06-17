@@ -46,3 +46,27 @@ Tests use `Phoenix.LiveViewTest` to render components and verify:
 - Basic icon rendering
 - HTML attribute support (class, aria attributes, etc.)
 - Attribute name conversion (snake_case to kebab-case)
+
+## Automated Updates & Releases
+
+### Update Workflow
+The project uses GitHub Actions to automatically check for lucide-static updates:
+- **Schedule**: Runs weekly (Mondays at 9 AM UTC)
+- **Manual trigger**: Can be run manually via GitHub Actions UI
+- **Process**:
+  1. Checks npm for new lucide-static versions
+  2. Creates a PR with updates if available
+  3. Runs tests to ensure compatibility
+  4. Bumps project version automatically
+
+### Release Workflow
+Releases are automated when a version tag is pushed:
+- **Trigger**: Push tag matching `v*.*.*` pattern
+- **Process**:
+  1. Verifies tag version matches mix.exs
+  2. Runs full test suite
+  3. Publishes to Hex.pm
+  4. Creates GitHub release
+
+### Mix Tasks
+- `mix lucide_icons.check_updates` - Check if lucide-static has updates available (uses Req for HTTP requests)
