@@ -17,8 +17,6 @@ jobs:
     runs-on: ubuntu-latest
     # Only run on main repository, not on forks
     if: github.repository == 'zoedsoupe/lucide_icons'
-    env:
-      MIX_ENV: test
     steps:
       - uses: actions/checkout@v4
       
@@ -55,23 +53,37 @@ jobs:
             exit 1
           fi
       
-      - name: Cache deps
+      - name: Cache Elixir deps
         uses: actions/cache@v4
+        id: deps-cache
         with:
           path: deps
-          key: ${{ runner.os }}-mix-${{ hashFiles('**/mix.lock') }}
+          key: ${{ runner.os }}-mix-${{ env.MIX_ENV }}-${{ hashFiles(format('{0}{1}', github.workspace, '/mix.lock')) }}
+
+      - name: Cache Elixir _build
+        uses: actions/cache@v4
+        id: build-cache
+        with:
+          path: _build
+          key: ${{ runner.os }}-build-${{ env.MIX_ENV }}-${{ matrix.otp }}-${{ matrix.elixir }}-${{ hashFiles('**/mix.lock') }}-${{ hashFiles('priv/package-lock.json') }}
           restore-keys: |
-            ${{ runner.os }}-mix-
+            ${{ runner.os }}-build-${{ env.MIX_ENV }}-${{ matrix.otp }}-${{ matrix.elixir }}-${{ hashFiles('**/mix.lock') }}-
+            ${{ runner.os }}-build-${{ env.MIX_ENV }}-${{ matrix.otp }}-${{ matrix.elixir }}-
       
       - name: Install dependencies
+        if: steps.deps-cache.outputs.cache-hit != 'true'
         run: |
           mix local.rebar --force
           mix local.hex --force
           mix deps.get
-      
-      - name: Run tests
-        run: mix test
-      
+
+      - name: Compile deps
+        if: steps.build-cache.outputs.cache-hit != 'true'
+        run: mix deps.compile --warnings-as-errors
+
+      - name: Run compiler checks
+        run: mix clean && mix compile --force --warning-as-errors
+            
       - name: Build docs
         run: mix docs
       
