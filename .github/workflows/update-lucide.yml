@@ -1,0 +1,148 @@
+name: Update Lucide Icons
+
+on:
+  # Run weekly on Mondays at 9 AM UTC
+  schedule:
+    - cron: '0 9 * * 1'
+  # Allow manual trigger
+  workflow_dispatch:
+
+jobs:
+  check-for-updates:
+    runs-on: ubuntu-latest
+    outputs:
+      update_available: ${{ steps.check.outputs.update_available }}
+      current_version: ${{ steps.check.outputs.current_version }}
+      latest_version: ${{ steps.check.outputs.latest_version }}
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      
+      - name: Check for lucide-static updates
+        id: check
+        run: |
+          # Get current version from package.json
+          CURRENT_VERSION=$(cd priv && npm list lucide-static --json | jq -r '.dependencies["lucide-static"].version')
+          echo "Current version: $CURRENT_VERSION"
+          
+          # Get latest version from npm
+          LATEST_VERSION=$(npm view lucide-static version)
+          echo "Latest version: $LATEST_VERSION"
+          
+          # Compare versions
+          if [ "$CURRENT_VERSION" != "$LATEST_VERSION" ]; then
+            echo "Update available!"
+            echo "update_available=true" >> $GITHUB_OUTPUT
+            echo "current_version=$CURRENT_VERSION" >> $GITHUB_OUTPUT
+            echo "latest_version=$LATEST_VERSION" >> $GITHUB_OUTPUT
+          else
+            echo "Already up to date"
+            echo "update_available=false" >> $GITHUB_OUTPUT
+          fi
+
+  create-update-pr:
+    needs: check-for-updates
+    if: needs.check-for-updates.outputs.update_available == 'true'
+    runs-on: ubuntu-latest
+    env:
+      MIX_ENV: test
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Setup Elixir
+        uses: erlef/setup-beam@v1
+        with:
+          otp-version: '27.3'
+          elixir-version: '1.19.0-rc.0'
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      
+      - name: Update lucide-static
+        run: |
+          cd priv
+          # Update to exact version
+          npm install lucide-static@${{ needs.check-for-updates.outputs.latest_version }} --save-exact
+          cd ..
+      
+      - name: Cache Elixir deps
+        uses: actions/cache@v4
+        with:
+          path: deps
+          key: ${{ runner.os }}-mix-${{ hashFiles('**/mix.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-mix-
+      
+      - name: Install dependencies
+        run: |
+          mix local.rebar --force
+          mix local.hex --force
+          mix deps.get
+      
+      - name: Compile project
+        run: mix compile --warnings-as-errors
+      
+      - name: Run tests
+        run: mix test
+      
+      - name: Calculate new version
+        id: version
+        run: |
+          # Get current project version
+          CURRENT_PROJECT_VERSION=$(grep '@version' mix.exs | grep -oE '[0-9]+\.[0-9]+\.[0-9]+')
+          echo "Current project version: $CURRENT_PROJECT_VERSION"
+          
+          # Increment patch version
+          IFS='.' read -ra VERSION_PARTS <<< "$CURRENT_PROJECT_VERSION"
+          MAJOR=${VERSION_PARTS[0]}
+          MINOR=${VERSION_PARTS[1]}
+          PATCH=${VERSION_PARTS[2]}
+          NEW_PATCH=$((PATCH + 1))
+          NEW_VERSION="${MAJOR}.${MINOR}.${NEW_PATCH}"
+          
+          echo "New version: $NEW_VERSION"
+          echo "new_version=$NEW_VERSION" >> $GITHUB_OUTPUT
+      
+      - name: Update version in mix.exs
+        run: |
+          sed -i 's/@version "[0-9]\+\.[0-9]\+\.[0-9]\+"/@version "${{ steps.version.outputs.new_version }}"/' mix.exs
+      
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v6
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: |
+            Update lucide-static from ${{ needs.check-for-updates.outputs.current_version }} to ${{ needs.check-for-updates.outputs.latest_version }}
+            
+            - Updates lucide-static dependency
+            - Regenerates icon components with latest icons
+            - Bumps version to ${{ steps.version.outputs.new_version }}
+          branch: update-lucide-${{ needs.check-for-updates.outputs.latest_version }}
+          title: 'chore: Update lucide-static to ${{ needs.check-for-updates.outputs.latest_version }}'
+          body: |
+            ## Lucide Icons Update
+            
+            This PR updates the lucide-static dependency from `${{ needs.check-for-updates.outputs.current_version }}` to `${{ needs.check-for-updates.outputs.latest_version }}`.
+            
+            ### Changes
+            - Updated `priv/package.json` and `priv/package-lock.json`
+            - Regenerated icon components
+            - All tests passing
+            - Version bumped to `${{ steps.version.outputs.new_version }}`
+            
+            ### Release Notes
+            View the [lucide-static changelog](https://github.com/lucide-icons/lucide/releases) for details on what's new.
+            
+            ---
+            *This PR was automatically created by the update workflow.*
+          labels: |
+            dependencies
+            automated

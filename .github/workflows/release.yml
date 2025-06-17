@@ -1,0 +1,102 @@
+name: Release to Hex
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+  # Manual trigger with version input
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to release (e.g., 2.1.0)'
+        required: true
+        type: string
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    # Only run on main repository, not on forks
+    if: github.repository == 'zoedsoupe/lucide_icons'
+    env:
+      MIX_ENV: test
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Elixir
+        uses: erlef/setup-beam@v1
+        with:
+          otp-version: '27.3'
+          elixir-version: '1.19.0-rc.0'
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      
+      - name: Determine version
+        id: version
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            VERSION="${{ github.event.inputs.version }}"
+          else
+            # Extract version from tag
+            VERSION=${GITHUB_REF#refs/tags/v}
+          fi
+          echo "Version to release: $VERSION"
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+      
+      - name: Verify version matches mix.exs
+        run: |
+          MIX_VERSION=$(grep '@version' mix.exs | grep -oE '[0-9]+\.[0-9]+\.[0-9]+')
+          if [ "$MIX_VERSION" != "${{ steps.version.outputs.version }}" ]; then
+            echo "Error: Version mismatch!"
+            echo "Tag/Input version: ${{ steps.version.outputs.version }}"
+            echo "mix.exs version: $MIX_VERSION"
+            exit 1
+          fi
+      
+      - name: Cache deps
+        uses: actions/cache@v4
+        with:
+          path: deps
+          key: ${{ runner.os }}-mix-${{ hashFiles('**/mix.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-mix-
+      
+      - name: Install dependencies
+        run: |
+          mix local.rebar --force
+          mix local.hex --force
+          mix deps.get
+      
+      - name: Run tests
+        run: mix test
+      
+      - name: Build docs
+        run: mix docs
+      
+      - name: Publish to Hex
+        env:
+          HEX_API_KEY: ${{ secrets.HEX_API_KEY }}
+        run: |
+          mix hex.publish --yes
+      
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{ steps.version.outputs.version }}
+          name: v${{ steps.version.outputs.version }}
+          body: |
+            ## Release v${{ steps.version.outputs.version }}
+            
+            ### Installation
+            
+            ```elixir
+            {:lucide_icons, "~> ${{ steps.version.outputs.version }}"}
+            ```
+            
+            ---
+            
+            [View on Hex.pm](https://hex.pm/packages/lucide_icons/${{ steps.version.outputs.version }})
+          draft: false
+          prerelease: false

@@ -13,8 +13,8 @@ jobs:
       MIX_ENV: dev
     strategy:
       matrix:
-        otp: [27.0]
-        elixir: [1.17.3]
+        otp: [27.3]
+        elixir: [1.19.0-rc.0]
     steps:
       - uses: actions/checkout@v4
       
@@ -24,18 +24,21 @@ jobs:
           elixir-version: ${{ matrix.elixir }}
 
       - name: Cache Elixir deps
-        uses: actions/cache@v1
+        uses: actions/cache@v4
         id: deps-cache
         with:
           path: deps
           key: ${{ runner.os }}-mix-${{ env.MIX_ENV }}-${{ hashFiles(format('{0}{1}', github.workspace, '/mix.lock')) }}
 
       - name: Cache Elixir _build
-        uses: actions/cache@v1
+        uses: actions/cache@v4
         id: build-cache
         with:
           path: _build
-          key: ${{ runner.os }}-build-${{ env.MIX_ENV }}-${{ matrix.otp }}-${{ matrix.elixir }}-${{ hashFiles(format('{0}{1}', github.workspace, '/mix.lock')) }}
+          key: ${{ runner.os }}-build-${{ env.MIX_ENV }}-${{ matrix.otp }}-${{ matrix.elixir }}-${{ hashFiles('**/mix.lock') }}-${{ hashFiles('priv/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-build-${{ env.MIX_ENV }}-${{ matrix.otp }}-${{ matrix.elixir }}-${{ hashFiles('**/mix.lock') }}-
+            ${{ runner.os }}-build-${{ env.MIX_ENV }}-${{ matrix.otp }}-${{ matrix.elixir }}-
 
       - name: Install deps
         if: steps.deps-cache.outputs.cache-hit != 'true'
@@ -60,8 +63,8 @@ jobs:
       MIX_ENV: test
     strategy:
       matrix:
-        otp: [27.0]
-        elixir: [1.17.3]
+        otp: [27.3]
+        elixir: [1.19.0-rc.0]
     steps:
       - uses: actions/checkout@v4
 
@@ -71,18 +74,18 @@ jobs:
           elixir-version: ${{ matrix.elixir }}
 
       - name: Cache Elixir deps
-        uses: actions/cache@v1
+        uses: actions/cache@v4
         id: deps-cache
         with:
           path: deps
           key: ${{ runner.os }}-mix-${{ env.MIX_ENV }}-${{ hashFiles(format('{0}{1}', github.workspace, '/mix.lock')) }}
 
       - name: Cache Elixir _build
-        uses: actions/cache@v1
+        uses: actions/cache@v4
         id: build-cache
         with:
           path: _build
-          key: ${{ runner.os }}-build-${{ env.MIX_ENV }}-${{ matrix.otp }}-${{ matrix.elixir }}-${{ hashFiles(format('{0}{1}', github.workspace, '/mix.lock')) }}
+          key: ${{ runner.os }}-build-${{ env.MIX_ENV }}-${{ matrix.otp }}-${{ matrix.elixir }}-${{ hashFiles('**/mix.lock') }}-${{ hashFiles('priv/package-lock.json') }}
 
       - name: Install deps
         if: steps.deps-cache.outputs.cache-hit != 'true'
@@ -96,7 +99,9 @@ jobs:
         run: mix deps.compile --warnings-as-errors
 
       - name: Compile app
-        run: mix compile --force --warnings-as-errors
+        run: |
+          mix clean
+          mix compile --force --warnings-as-errors
 
       - name: Run tests
         run: mix test
