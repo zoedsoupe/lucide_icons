@@ -19,11 +19,14 @@ defmodule Mix.Tasks.LucideIcons.CheckUpdates do
 
     case check_for_updates() do
       {:ok, :up_to_date, current} ->
-        Mix.shell().info("Already up-to-date with lucide-static v#{current}")
+        Mix.shell().info("Current version: v#{current}")
+        Mix.shell().info("Already up-to-date with lucide-static")
         exit({:shutdown, 1})
 
       {:ok, :update_available, current, latest} ->
-        Mix.shell().info("Update available: v#{current} -> v#{latest}")
+        Mix.shell().info("Current version: v#{current}")
+        Mix.shell().info("Latest version: v#{latest}")
+        Mix.shell().info("Update available!")
         exit({:shutdown, 0})
 
       {:error, reason} ->

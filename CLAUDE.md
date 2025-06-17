@@ -58,6 +58,8 @@ The project uses GitHub Actions to automatically check for lucide-static updates
   2. Creates a PR with updates if available
   3. Runs tests to ensure compatibility
   4. Bumps project version automatically
+- **Required GitHub Secrets**:
+  - `PAT`: Personal Access Token with `repo` scope for creating PRs (optional, falls back to GITHUB_TOKEN)
 
 ### Release Workflow
 Releases are automated when a version tag is pushed:
@@ -67,6 +69,8 @@ Releases are automated when a version tag is pushed:
   2. Runs full test suite
   3. Publishes to Hex.pm
   4. Creates GitHub release
+- **Required GitHub Secrets**:
+  - `HEX_API_KEY`: API key for publishing to Hex.pm
 
 ### Mix Tasks
 - `mix lucide_icons.check_updates` - Check if lucide-static has updates available (uses Req for HTTP requests)

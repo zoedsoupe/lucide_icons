@@ -22,25 +22,39 @@ jobs:
         with:
           node-version: '20'
       
+      - name: Setup Elixir
+        uses: erlef/setup-beam@v1
+        with:
+          otp-version: '27.3'
+          elixir-version: '1.19.0-rc.0'
+      
+      - name: Install dependencies
+        run: |
+          mix local.rebar --force
+          mix local.hex --force
+          mix deps.get
+      
       - name: Check for lucide-static updates
         id: check
         run: |
-          # Get current version from package.json
-          CURRENT_VERSION=$(cd priv && npm list lucide-static --json | jq -r '.dependencies["lucide-static"].version')
-          echo "Current version: $CURRENT_VERSION"
+          # Run the mix task and capture output
+          set +e  # Don't exit on non-zero status
+          OUTPUT=$(mix lucide_icons.check_updates 2>&1)
+          EXIT_CODE=$?
+          set -e
           
-          # Get latest version from npm
-          LATEST_VERSION=$(npm view lucide-static version)
-          echo "Latest version: $LATEST_VERSION"
+          echo "$OUTPUT"
           
-          # Compare versions
-          if [ "$CURRENT_VERSION" != "$LATEST_VERSION" ]; then
-            echo "Update available!"
+          # Extract versions from output
+          CURRENT_VERSION=$(echo "$OUTPUT" | grep "Current version:" | sed 's/Current version: v//')
+          LATEST_VERSION=$(echo "$OUTPUT" | grep "Latest version:" | sed 's/Latest version: v//')
+          
+          # Exit code 0 means update available, 1 means up to date
+          if [ $EXIT_CODE -eq 0 ]; then
             echo "update_available=true" >> $GITHUB_OUTPUT
             echo "current_version=$CURRENT_VERSION" >> $GITHUB_OUTPUT
             echo "latest_version=$LATEST_VERSION" >> $GITHUB_OUTPUT
           else
-            echo "Already up to date"
             echo "update_available=false" >> $GITHUB_OUTPUT
           fi
 
@@ -53,7 +67,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.PAT || secrets.GITHUB_TOKEN }}
       
       - name: Setup Elixir
         uses: erlef/setup-beam@v1
@@ -118,7 +132,7 @@ jobs:
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v6
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.PAT || secrets.GITHUB_TOKEN }}
           commit-message: |
             Update lucide-static from ${{ needs.check-for-updates.outputs.current_version }} to ${{ needs.check-for-updates.outputs.latest_version }}
             
