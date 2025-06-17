@@ -9,7 +9,7 @@ defmodule LucideiconsTest do
 
     html =
       rendered_to_string(~H"""
-      <Lucideicons.triangle_alert />
+      <Lucideicons.activity />
       """)
 
     assert html =~ "<svg"
@@ -20,7 +20,7 @@ defmodule LucideiconsTest do
 
     html =
       rendered_to_string(~H"""
-      <Lucideicons.triangle_alert class="h-4 w-4" />
+      <Lucideicons.activity class="h-4 w-4" />
       """)
 
     assert html =~ ~s(<svg class="h-4 w-4")
@@ -31,7 +31,7 @@ defmodule LucideiconsTest do
 
     html =
       rendered_to_string(~H"""
-      <Lucideicons.triangle_alert aria_hidden={false} />
+      <Lucideicons.activity aria_hidden={false} />
       """)
 
     assert html =~ ~s(<svg aria-hidden="false")
