@@ -98,10 +98,20 @@ jobs:
         if: steps.build-cache.outputs.cache-hit != 'true'
         run: mix deps.compile --warnings-as-errors
 
-      - name: Compile app
+      - name: Clean build
+        run: mix clean
+
+      - name: List SVG files
         run: |
-          mix clean
-          mix compile --force --warnings-as-errors
+          echo "SVG files in priv/node_modules/lucide-static/icons/:"
+          ls -la priv/node_modules/lucide-static/icons/triangle*.svg || echo "No triangle SVG files found"
+
+      - name: Compile app
+        run: mix compile --force --warnings-as-errors
+
+      - name: Check compiled functions
+        run: |
+          mix run -e "IO.inspect(:triangle_alert in (Lucideicons.__info__(:functions) |> Keyword.keys()), label: \"triangle_alert function exists\")"
 
       - name: Run tests
         run: mix test
