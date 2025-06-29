@@ -30,7 +30,7 @@ defmodule Lucideicons.MixProject do
       {:phoenix_live_view, "~> 1.0"},
       {:jason, "~> 1.4", optional: true},
       {:ex_doc, "~> 0.27", only: :dev, runtime: false},
-      {:req, "~> 0.5", only: :dev, runtime: false}
+      {:req, "~> 0.5", only: [:dev, :test], runtime: false}
     ]
   end
 
@@ -59,7 +59,8 @@ defmodule Lucideicons.MixProject do
 
   defp package do
     %{
-      files: ~w(lib priv .formatter.exs mix.exs README.md LICENSE),
+      files:
+        ~w(lib/lucide_icons lib/lucide_icons.ex priv .formatter.exs mix.exs README.md LICENSE),
       licenses: ["BSD-3-Clause"],
       links: %{"GitHub" => @github_url}
     }

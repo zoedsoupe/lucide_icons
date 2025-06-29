@@ -7,6 +7,10 @@ on:
   # Allow manual trigger
   workflow_dispatch:
 
+permissions:
+  contents: write
+  pull-requests: write
+
 jobs:
   check-for-updates:
     runs-on: ubuntu-latest
@@ -61,7 +65,6 @@ jobs:
       - name: Check for lucide-static updates
         id: check
         run: |
-          # Run the mix task and capture output
           set +e  # Don't exit on non-zero status
           OUTPUT=$(mix lucide_icons.check_updates 2>&1)
           EXIT_CODE=$?
@@ -69,7 +72,6 @@ jobs:
           
           echo "$OUTPUT"
           
-          # Extract versions from output
           CURRENT_VERSION=$(echo "$OUTPUT" | grep "Current version:" | sed 's/Current version: v//')
           LATEST_VERSION=$(echo "$OUTPUT" | grep "Latest version:" | sed 's/Latest version: v//')
           
@@ -86,18 +88,10 @@ jobs:
     needs: check-for-updates
     if: needs.check-for-updates.outputs.update_available == 'true'
     runs-on: ubuntu-latest
-    env:
-      MIX_ENV: test
     steps:
       - uses: actions/checkout@v4
         with:
           token: ${{ secrets.PAT || secrets.GITHUB_TOKEN }}
-      
-      - name: Setup Elixir
-        uses: erlef/setup-beam@v1
-        with:
-          otp-version: '27.3'
-          elixir-version: '1.19.0-rc.0'
       
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -106,46 +100,7 @@ jobs:
       
       - name: Update lucide-static
         run: |
-          cd priv
-          # Update to exact version
-          npm install lucide-static@${{ needs.check-for-updates.outputs.latest_version }} --save-exact
-          cd ..
-      
-      - name: Cache Elixir deps
-        uses: actions/cache@v4
-        id: deps-cache-create-pr
-        with:
-          path: deps
-          key: ${{ runner.os }}-mix-${{ env.MIX_ENV }}-${{ hashFiles('**/mix.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-mix-${{ env.MIX_ENV }}-
-      
-      - name: Cache Elixir _build
-        uses: actions/cache@v4
-        id: build-cache-create-pr
-        with:
-          path: _build
-          key: ${{ runner.os }}-build-${{ env.MIX_ENV }}-27.3-1.19.0-rc.0-${{ hashFiles('**/mix.lock') }}-${{ hashFiles('priv/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-build-${{ env.MIX_ENV }}-27.3-1.19.0-rc.0-${{ hashFiles('**/mix.lock') }}-
-            ${{ runner.os }}-build-${{ env.MIX_ENV }}-27.3-1.19.0-rc.0-
-      
-      - name: Install dependencies
-        if: steps.deps-cache-create-pr.outputs.cache-hit != 'true'
-        run: |
-          mix local.rebar --force
-          mix local.hex --force
-          mix deps.get
-      
-      - name: Compile deps
-        if: steps.build-cache-create-pr.outputs.cache-hit != 'true'
-        run: mix deps.compile
-      
-      - name: Compile project
-        run: mix compile --warnings-as-errors
-      
-      - name: Run tests
-        run: mix test
+          npm i --prefix ./priv lucide-static@${{ needs.check-for-updates.outputs.latest_version }} --save-exact
       
       - name: Calculate new version
         id: version
@@ -170,9 +125,8 @@ jobs:
           sed -i 's/@version "[0-9]\+\.[0-9]\+\.[0-9]\+"/@version "${{ steps.version.outputs.new_version }}"/' mix.exs
       
       - name: Create Pull Request
-        uses: peter-evans/create-pull-request@v6
+        uses: peter-evans/create-pull-request@v7
         with:
-          token: ${{ secrets.PAT || secrets.GITHUB_TOKEN }}
           commit-message: |
             Update lucide-static from ${{ needs.check-for-updates.outputs.current_version }} to ${{ needs.check-for-updates.outputs.latest_version }}
             
