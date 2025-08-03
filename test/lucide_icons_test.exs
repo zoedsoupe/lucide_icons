@@ -36,4 +36,15 @@ defmodule LucideiconsTest do
 
     assert html =~ ~s(<svg aria-hidden="false")
   end
+
+  test "renders icon that may be deprecated, with different package version" do
+    assigns = %{}
+
+    html =
+      rendered_to_string(~H"""
+      <Lucideicons.circle_alert />
+      """)
+
+    assert html =~ "<svg"
+  end
 end
