@@ -105,7 +105,7 @@ jobs:
 
       - name: Compile app
         run: |
-          mix do clean, compile --force --warnings-as-errors
+          mix clean + compile --force --warnings-as-errors
 
       - name: Ensure icons
         run: npm i --prefix priv
