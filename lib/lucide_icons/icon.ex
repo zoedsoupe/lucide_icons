@@ -20,6 +20,7 @@ defmodule Lucideicons.Icon do
   @json (cond do
            Code.ensure_loaded?(JSON) -> JSON
            Code.ensure_loaded?(Jason) -> Jason
+           Code.ensure_loaded?(Poison) -> Poison
            true -> raise "need a JSON library available, either JSON or Jason"
          end)
 
@@ -77,6 +78,11 @@ defmodule Lucideicons.Icon do
   end
 
   def insert_attrs(<<@license, rest::binary>>, attrs) do
+    insert_attrs(rest, attrs)
+  end
+
+  def insert_attrs(icon, attrs) when is_binary(icon) do
+    [_license, rest] = String.split(icon, "\n", parts: 2)
     insert_attrs(rest, attrs)
   end
 end
