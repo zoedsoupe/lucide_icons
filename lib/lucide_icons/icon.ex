@@ -13,7 +13,7 @@ defmodule Lucideicons.Icon do
       * `:name` - the name of the icon
 
   """
-  @fields ~w(file name)a
+  @fields ~w(file name version)a
   @enforce_keys @fields
   defstruct @fields
 
@@ -32,6 +32,8 @@ defmodule Lucideicons.Icon do
                          |> @json.decode!()
                          |> get_in(["packages", "node_modules/lucide-static", "version"])
 
+  def latest_version, do: @lucide_static_version
+
   @type t :: %Lucideicons.Icon{file: binary, name: String.t()}
 
   @doc "Parses a SVG file and returns structured data"
@@ -48,7 +50,10 @@ defmodule Lucideicons.Icon do
       |> String.replace("-", "_")
       |> String.to_atom()
 
-    struct!(__MODULE__, file: file, name: name)
+    [license, _icon] = String.split(file, "\n", parts: 2)
+    ["v" <> version] = Regex.run(~r/v\d+.\d+.\d+/, license)
+
+    struct!(__MODULE__, file: file, name: name, version: version)
   end
 
   @doc "Converts opts to HTML attributes"

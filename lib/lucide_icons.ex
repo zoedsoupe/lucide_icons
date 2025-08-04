@@ -45,6 +45,7 @@ defmodule Lucideicons do
       @external_resource Path.relative_to_cwd(icon_path)
       Icon.parse!(icon_path)
     end
+    |> Enum.filter(&(&1.version == Icon.latest_version()))
 
   names = icons |> Enum.map(& &1.name) |> Enum.uniq()
 

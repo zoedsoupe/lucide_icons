@@ -73,6 +73,11 @@ jobs:
           otp-version: ${{ matrix.otp }}
           elixir-version: ${{ matrix.elixir }}
 
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
       - name: Cache Elixir deps
         uses: actions/cache@v4
         id: deps-cache
@@ -100,8 +105,10 @@ jobs:
 
       - name: Compile app
         run: |
-          mix clean
-          mix compile --force --warnings-as-errors
+          mix clean + compile --force --warnings-as-errors
+
+      - name: Ensure icons
+        run: npm i --prefix priv
 
       - name: Run tests
         run: mix test
