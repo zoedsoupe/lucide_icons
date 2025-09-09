@@ -1,6 +1,9 @@
 # Lucideicons
 
-![CI](https://github.com/zoedsoupe/lucide_icons/actions/workflows/ci.yml/badge.svg)
+[![hex.pm](https://img.shields.io/hexpm/v/lucide_icons.svg)](https://hex.pm/packages/lucide_icons)
+[![docs](https://img.shields.io/badge/hex-docs-blue.svg)](https://hexdocs.pm/lucide_icons)
+[![ci](https://github.com/zoedsoupe/lucide_icons/actions/workflows/ci.yml/badge.svg)](https://github.com/zoedsoupe/lucide_icons/actions/workflows/ci.yml)
+[![Hex Downloads](https://img.shields.io/hexpm/dt/lucide_icons)](https://hex.pm/packages/lucide_icons)
 
 This package adds a convenient way of using [Lucide](https://lucide.dev/) with your Phoenix.LiveView applications.
 
