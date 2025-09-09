@@ -134,7 +134,7 @@ jobs:
         run: mix deps.compile --warnings-as-errors
 
       - name: Compile app
-        run: mix compile --warnings-as-errors
+        run: mix clean + compile --force --warnings-as-errors
 
       - name: Ensure icons
         run: npm i --prefix priv
