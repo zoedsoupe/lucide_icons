@@ -29,8 +29,8 @@ jobs:
       - name: Setup Elixir
         uses: erlef/setup-beam@v1
         with:
-          otp-version: '27.3'
-          elixir-version: '1.19.0-rc.0'
+          otp-version: '28.0.2'
+          elixir-version: '1.18.4'
       
       - name: Cache Elixir deps
         uses: actions/cache@v4
@@ -46,10 +46,10 @@ jobs:
         id: build-cache
         with:
           path: _build
-          key: ${{ runner.os }}-build-dev-27.3-1.19.0-rc.0-${{ hashFiles('**/mix.lock') }}-${{ hashFiles('priv/package-lock.json') }}
+          key: ${{ runner.os }}-build-dev-28.0.2-1.18.4-${{ hashFiles('**/mix.lock') }}-${{ hashFiles('priv/package-lock.json') }}
           restore-keys: |
-            ${{ runner.os }}-build-dev-27.3-1.19.0-rc.0-${{ hashFiles('**/mix.lock') }}-
-            ${{ runner.os }}-build-dev-27.3-1.19.0-rc.0-
+            ${{ runner.os }}-build-dev-28.0.2-1.18.4-${{ hashFiles('**/mix.lock') }}-
+            ${{ runner.os }}-build-dev-28.0.2-1.18.4-
       
       - name: Install dependencies
         if: steps.deps-cache.outputs.cache-hit != 'true'

@@ -23,8 +23,8 @@ jobs:
       - name: Setup Elixir
         uses: erlef/setup-beam@v1
         with:
-          otp-version: '27.3'
-          elixir-version: '1.19.0-rc.0'
+          otp-version: '28.0.2'
+          elixir-version: '1.18.4'
       
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -82,7 +82,7 @@ jobs:
         run: mix deps.compile --warnings-as-errors
 
       - name: Run compiler checks
-        run: mix clean && mix compile --force --warning-as-errors
+        run: mix compile --warning-as-errors
             
       - name: Build docs
         run: mix docs

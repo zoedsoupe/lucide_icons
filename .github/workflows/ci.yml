@@ -13,8 +13,23 @@ jobs:
       MIX_ENV: dev
     strategy:
       matrix:
-        otp: [27.3]
-        elixir: [1.19.0-rc.0]
+        include:
+          - elixir: 1.18
+            otp: 28
+          - elixir: 1.18
+            otp: 27
+          - elixir: 1.18
+            otp: 26
+          - elixir: 1.17
+            otp: 27
+          - elixir: 1.17
+            otp: 26
+          - elixir: 1.17
+            otp: 25
+          - elixir: 1.16
+            otp: 25
+          - elixir: 1.16
+            otp: 24
     steps:
       - uses: actions/checkout@v4
       
@@ -28,7 +43,7 @@ jobs:
         id: deps-cache
         with:
           path: deps
-          key: ${{ runner.os }}-mix-${{ env.MIX_ENV }}-${{ hashFiles(format('{0}{1}', github.workspace, '/mix.lock')) }}
+          key: ${{ runner.os }}-elixir-${{ matrix.elixir }}-otp-${{ matrix.otp }}-mix-${{ env.MIX_ENV }}-${{ hashFiles(format('{0}{1}', github.workspace, '/mix.lock')) }}
 
       - name: Cache Elixir _build
         uses: actions/cache@v4
@@ -52,7 +67,7 @@ jobs:
         run: mix deps.compile --warnings-as-errors
 
       - name: Run compiler checks
-        run: mix clean && mix compile --force --warning-as-errors
+        run: mix compile --warning-as-errors
 
       - name: Run formatter check
         run: mix format --check-formatted
@@ -63,8 +78,23 @@ jobs:
       MIX_ENV: test
     strategy:
       matrix:
-        otp: [27.3]
-        elixir: [1.19.0-rc.0]
+        include:
+          - elixir: 1.18
+            otp: 28
+          - elixir: 1.18
+            otp: 27
+          - elixir: 1.18
+            otp: 26
+          - elixir: 1.17
+            otp: 27
+          - elixir: 1.17
+            otp: 26
+          - elixir: 1.17
+            otp: 25
+          - elixir: 1.16
+            otp: 25
+          - elixir: 1.16
+            otp: 24
     steps:
       - uses: actions/checkout@v4
 
@@ -83,14 +113,7 @@ jobs:
         id: deps-cache
         with:
           path: deps
-          key: ${{ runner.os }}-mix-${{ env.MIX_ENV }}-${{ hashFiles(format('{0}{1}', github.workspace, '/mix.lock')) }}
-
-      - name: Cache Elixir _build
-        uses: actions/cache@v4
-        id: build-cache
-        with:
-          path: _build
-          key: ${{ runner.os }}-build-${{ env.MIX_ENV }}-${{ matrix.otp }}-${{ matrix.elixir }}-${{ hashFiles('**/mix.lock') }}-${{ hashFiles('priv/package-lock.json') }}
+          key: ${{ runner.os }}-elixir-${{ matrix.elixir }}-otp-${{ matrix.otp }}-mix-${{ env.MIX_ENV }}-${{ hashFiles(format('{0}{1}', github.workspace, '/mix.lock')) }}
 
       - name: Install deps
         if: steps.deps-cache.outputs.cache-hit != 'true'
@@ -100,12 +123,10 @@ jobs:
           mix deps.get --only ${{ env.MIX_ENV }}
 
       - name: Compile deps
-        if: steps.build-cache.outputs.cache-hit != 'true'
         run: mix deps.compile --warnings-as-errors
 
       - name: Compile app
-        run: |
-          mix clean + compile --force --warnings-as-errors
+        run: mix clean + compile --force --warnings-as-errors
 
       - name: Ensure icons
         run: npm i --prefix priv
