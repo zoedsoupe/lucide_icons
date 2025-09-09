@@ -1,6 +1,6 @@
 {
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.05";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.05-small";
     elixir-overlay.url = "github:zoedsoupe/elixir-overlay";
   };
 
@@ -20,11 +20,11 @@
   in {
     devShells = forAllSystems (pkgs: let
       inherit (pkgs) mkShell;
-      inherit (pkgs.beam.interpreters) erlang_27;
+      inherit (pkgs.beam.interpreters) erlang_28;
     in {
       default = mkShell {
         name = "lucide-icons";
-        packages = with pkgs; [elixir-bin."1.19.0-rc.0" erlang_27 nodejs];
+        packages = with pkgs; [(elixir-with-otp erlang_28).latest erlang_28 nodejs];
       };
     });
   };
