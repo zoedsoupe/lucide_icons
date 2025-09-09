@@ -56,38 +56,60 @@ defmodule Lucideicons.Icon do
     struct!(__MODULE__, file: file, name: name, version: version)
   end
 
-  @doc "Converts opts to HTML attributes"
-  @spec opts_to_attrs(map) :: list
-  def opts_to_attrs(assigns) do
-    opts = Map.delete(assigns, :__changed__)
-
-    for {key, value} <- opts do
-      key =
-        key
-        |> Atom.to_string()
-        |> String.replace("_", "-")
-        |> Phoenix.HTML.Safe.to_iodata()
-
+  # "Converts opts to HTML attributes"
+  @spec assigns_to_attrs(map) :: list
+  defp assigns_to_attrs(assigns) do
+    for {key, value} <- assigns do
+      key = Phoenix.HTML.Safe.to_iodata(key)
       value = Phoenix.HTML.Safe.to_iodata(value)
-
       [?\s, key, ?=, ?", value, ?"]
     end
+  end
+
+  defp format_attr_key(key) when is_atom(key) do
+    key
+    |> Atom.to_string()
+    |> String.replace("_", "-")
   end
 
   @license "<!-- @license lucide-static v#{@lucide_static_version} - ISC -->\n"
 
   @doc "Inserts HTML attributes into an SVG icon"
-  @spec insert_attrs(binary, keyword) :: Phoenix.HTML.safe()
-  def insert_attrs("<svg" <> rest, attrs) do
-    Phoenix.HTML.raw(["<svg", attrs, rest])
+  @spec insert_attrs(binary, map) :: Phoenix.HTML.safe()
+  def insert_attrs("<svg" <> rest, %{} = assigns) do
+    svg_attrs = parse_svg_attrs("<svg" <> rest)
+    assigns = merge_assigns(Map.delete(assigns, :__changed__), svg_attrs)
+    Phoenix.HTML.raw(["<svg", assigns_to_attrs(assigns)])
   end
 
-  def insert_attrs(<<@license, rest::binary>>, attrs) do
-    insert_attrs(rest, attrs)
+  def insert_attrs(<<@license, rest::binary>>, assigns) do
+    insert_attrs(rest, assigns)
   end
 
-  def insert_attrs(icon, attrs) when is_binary(icon) do
+  def insert_attrs(icon, assigns) when is_binary(icon) do
     [_license, rest] = String.split(icon, "\n", parts: 2)
-    insert_attrs(rest, attrs)
+    insert_attrs(rest, assigns)
+  end
+
+  defp parse_svg_attrs(svg) when is_binary(svg) do
+    svg
+    |> String.trim()
+    |> LazyHTML.from_fragment()
+    |> LazyHTML.attributes()
+    |> then(fn [attrs] -> Map.new(attrs) end)
+  end
+
+  defp merge_assigns(%{class: class} = assigns, %{"class" => lucide_class} = svg_attrs) do
+    class = Enum.join([lucide_class, class], " ")
+    assigns = Map.new(assigns, fn {k, v} -> {format_attr_key(k), v} end)
+
+    svg_attrs
+    |> Map.merge(assigns)
+    |> Map.put("class", class)
+  end
+
+  defp merge_assigns(%{} = assigns, %{} = svg_attrs) do
+    assigns = Map.new(assigns, fn {k, v} -> {format_attr_key(k), v} end)
+    Map.merge(svg_attrs, assigns)
   end
 end

@@ -28,6 +28,7 @@ defmodule Lucideicons.MixProject do
     [
       {:phoenix_html, "~> 4.0"},
       {:phoenix_live_view, "~> 1.0"},
+      {:lazy_html, "~> 0.1"},
       {:jason, "~> 1.4", optional: true},
       {:ex_doc, "~> 0.27", only: :dev, runtime: false},
       {:req, "~> 0.5", only: [:dev, :test], runtime: false}

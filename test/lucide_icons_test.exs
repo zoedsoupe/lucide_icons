@@ -9,7 +9,7 @@ defmodule LucideiconsTest do
 
     html =
       rendered_to_string(~H"""
-      <Lucideicons.activity />
+      <Lucideicons.activity_square />
       """)
 
     assert html =~ "<svg"
@@ -20,10 +20,10 @@ defmodule LucideiconsTest do
 
     html =
       rendered_to_string(~H"""
-      <Lucideicons.activity class="h-4 w-4" />
+      <Lucideicons.activity_square class="h-4 w-4" />
       """)
 
-    assert html =~ ~s(<svg class="h-4 w-4")
+    assert html =~ "h-4 w-4"
   end
 
   test "renders icon with assigns" do
@@ -31,7 +31,7 @@ defmodule LucideiconsTest do
 
     html =
       rendered_to_string(~H"""
-      <Lucideicons.activity aria_hidden={false} />
+      <Lucideicons.activity_square aria_hidden={false} />
       """)
 
     assert html =~ ~s(<svg aria-hidden="false")
@@ -46,5 +46,18 @@ defmodule LucideiconsTest do
       """)
 
     assert html =~ "<svg"
+  end
+
+  # https://github.com/zoedsoupe/lucide_icons/issues/15
+  test "regression github issue of duplicated class attr (#15)" do
+    assigns = %{}
+
+    html =
+      rendered_to_string(~H"""
+      <Lucideicons.activity_square class="h-4 w-4" />
+      """)
+
+    refute html =~ ~s(<svg class="h-4 w-4")
+    assert html =~ ~s(<svg class="lucide lucide-activity-square h-4 w-4")
   end
 end

@@ -103,8 +103,7 @@ defmodule Lucideicons do
     Accepts all HTML attributes that are valid for SVG elements.
     """
     def unquote(name)(assigns) do
-      attrs = Icon.opts_to_attrs(assigns)
-      icon_svg = Icon.insert_attrs(unquote(file), attrs)
+      icon_svg = Icon.insert_attrs(unquote(file), assigns)
 
       assigns = assign(assigns, raw: icon_svg)
 
