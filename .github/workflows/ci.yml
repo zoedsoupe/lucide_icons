@@ -13,8 +13,23 @@ jobs:
       MIX_ENV: dev
     strategy:
       matrix:
-        otp: [27.3]
-        elixir: [1.19.0-rc.0]
+        include:
+          - elixir: 1.18
+            otp: 28
+          - elixir: 1.18
+            otp: 27
+          - elixir: 1.18
+            otp: 26
+          - elixir: 1.17
+            otp: 27
+          - elixir: 1.17
+            otp: 26
+          - elixir: 1.17
+            otp: 25
+          - elixir: 1.16
+            otp: 25
+          - elixir: 1.16
+            otp: 24
     steps:
       - uses: actions/checkout@v4
       
@@ -63,8 +78,23 @@ jobs:
       MIX_ENV: test
     strategy:
       matrix:
-        otp: [27.3]
-        elixir: [1.19.0-rc.0]
+        include:
+          - elixir: 1.18
+            otp: 28
+          - elixir: 1.18
+            otp: 27
+          - elixir: 1.18
+            otp: 26
+          - elixir: 1.17
+            otp: 27
+          - elixir: 1.17
+            otp: 26
+          - elixir: 1.17
+            otp: 25
+          - elixir: 1.16
+            otp: 25
+          - elixir: 1.16
+            otp: 24
     steps:
       - uses: actions/checkout@v4
 

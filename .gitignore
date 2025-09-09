@@ -28,3 +28,6 @@ lucide_icons-*.tar
 /priv/node_modules/
 
 .env
+
+# lsp
+/.expert/
