@@ -49,8 +49,15 @@ defmodule Mix.Tasks.LucideIcons.CheckUpdates do
   defp get_current_version do
     package_lock_path = Path.join(["priv", "package-lock.json"])
 
+    json =
+      cond do
+        Code.ensure_loaded?(JSON) -> JSON
+        Code.ensure_loaded?(Jason) -> Jason
+        true -> raise "need a json encoding library installed"
+      end
+
     with {:ok, content} <- File.read(package_lock_path),
-         {:ok, json} <- JSON.decode(content),
+         {:ok, json} <- json.decode(content),
          version when is_binary(version) <-
            get_in(json, ["packages", "node_modules/lucide-static", "version"]) do
       {:ok, version}
