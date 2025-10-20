@@ -3,6 +3,6 @@
   "version": "0.1.0",
   "license": "BSD-3-Clause",
   "dependencies": {
-    "lucide-static": "0.544.0"
+    "lucide-static": "0.546.0"
   }
 }
