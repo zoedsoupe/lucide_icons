@@ -79,7 +79,18 @@ defmodule Lucideicons.Icon do
   def insert_attrs("<svg" <> rest, %{} = assigns) do
     svg_attrs = parse_svg_attrs("<svg" <> rest)
     assigns = merge_assigns(Map.delete(assigns, :__changed__), svg_attrs)
-    Phoenix.HTML.raw(["<svg", assigns_to_attrs(assigns)])
+
+    # Find where the opening SVG tag ends (the closing >)
+    # We need to preserve everything after the opening tag
+    case :binary.match(rest, ">") do
+      {tag_end_pos, _} ->
+        {_opening_tag_content, svg_content} = String.split_at(rest, tag_end_pos + 1)
+        Phoenix.HTML.raw(["<svg", assigns_to_attrs(assigns), ">", svg_content])
+
+      :nomatch ->
+        # Fallback: if no > found, just append rest (shouldn't happen with valid SVG)
+        Phoenix.HTML.raw(["<svg", assigns_to_attrs(assigns), ">", rest])
+    end
   end
 
   def insert_attrs(<<@license, rest::binary>>, assigns) do
