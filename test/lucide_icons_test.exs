@@ -9,7 +9,7 @@ defmodule LucideiconsTest do
 
     html =
       rendered_to_string(~H"""
-      <Lucideicons.activity_square />
+      <Lucideicons.activity />
       """)
 
     assert html =~ "<svg"
@@ -20,7 +20,7 @@ defmodule LucideiconsTest do
 
     html =
       rendered_to_string(~H"""
-      <Lucideicons.activity_square class="h-4 w-4" />
+      <Lucideicons.activity class="h-4 w-4" />
       """)
 
     assert html =~ "h-4 w-4"
@@ -31,7 +31,7 @@ defmodule LucideiconsTest do
 
     html =
       rendered_to_string(~H"""
-      <Lucideicons.activity_square aria_hidden={false} />
+      <Lucideicons.activity aria_hidden={false} />
       """)
 
     assert html =~ ~s(<svg aria-hidden="false")
@@ -42,7 +42,7 @@ defmodule LucideiconsTest do
 
     html =
       rendered_to_string(~H"""
-      <Lucideicons.circle_alert />
+      <Lucideicons.twitter />
       """)
 
     assert html =~ "<svg"
@@ -54,10 +54,10 @@ defmodule LucideiconsTest do
 
     html =
       rendered_to_string(~H"""
-      <Lucideicons.activity_square class="h-4 w-4" />
+      <Lucideicons.activity class="h-4 w-4" />
       """)
 
     refute html =~ ~s(<svg class="h-4 w-4")
-    assert html =~ ~s(<svg class="lucide lucide-activity-square h-4 w-4")
+    assert html =~ ~s(<svg class="lucide lucide-activity h-4 w-4")
   end
 end
