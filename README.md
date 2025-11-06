@@ -13,12 +13,11 @@ You can find the original docs [here](https://lucide.dev/docs) and repo [here](h
 
 ## Installation
 
-> ![WARNING]
-> Since version 2.0 ths library only support phoenix_live_view v1.0+
+> **Warning:** Since version 2.0 this library only supports phoenix_live_view v1.0+
 
 Add `lucide_icons` to the list of dependencies in `mix.exs`:
 
-```elixir dark
+```elixir
 def deps do
   [
     {:lucide_icons, "~> 2.0"}
@@ -30,9 +29,9 @@ Then run `mix deps.get`.
 
 ## Usage
 
-#### With Heex
+### With Heex
 
-```elixir dark
+```elixir
 <Lucideicons.alert_triangle class="h-4 w-4" aria-hidden/>
 ```
 
