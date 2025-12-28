@@ -20,7 +20,7 @@ Add `lucide_icons` to the list of dependencies in `mix.exs`:
 ```elixir
 def deps do
   [
-    {:lucide_icons, "~> 2.0"}
+    {:lucide_icons, "~> 2.0"} # x-release-please-version
   ]
 end
 ```
