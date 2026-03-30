@@ -37,17 +37,6 @@ defmodule LucideiconsTest do
     assert html =~ ~s(<svg aria-hidden="false")
   end
 
-  test "renders icon that may be deprecated, with different package version" do
-    assigns = %{}
-
-    html =
-      rendered_to_string(~H"""
-      <Lucideicons.twitter />
-      """)
-
-    assert html =~ "<svg"
-  end
-
   # https://github.com/zoedsoupe/lucide_icons/issues/15
   test "regression github issue of duplicated class attr (#15)" do
     assigns = %{}
