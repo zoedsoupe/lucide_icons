@@ -1,5 +1,23 @@
 # Changelog
 
+## [2.2.0](https://github.com/zoedsoupe/lucide_icons/compare/v2.1.2...v2.2.0) (2026-05-15)
+
+
+### Features
+
+* Normalize class assign to match Phoenix conditional-class patterns ([#52](https://github.com/zoedsoupe/lucide_icons/issues/52)) ([8370148](https://github.com/zoedsoupe/lucide_icons/commit/8370148bf59b4a7ade526699dd340b4f98cdaa50))
+
+
+### Build System
+
+* **lucide-upstream:** Update lucide-static to 1.16.0 ([#55](https://github.com/zoedsoupe/lucide_icons/issues/55)) ([afef1d7](https://github.com/zoedsoupe/lucide_icons/commit/afef1d71ed962ea67434453c0e6d3a79f39a8988))
+* Update lucide-static from 1.14.0 to 1.16.0 ([afef1d7](https://github.com/zoedsoupe/lucide_icons/commit/afef1d71ed962ea67434453c0e6d3a79f39a8988))
+
+
+### Continuous Integration
+
+* use correct token for update pr workflow ([5b5b576](https://github.com/zoedsoupe/lucide_icons/commit/5b5b5766ab7e7dcfbcc02feb25b13d48a959aed6))
+
 ## [2.1.2](https://github.com/zoedsoupe/lucide_icons/compare/v2.1.1...v2.1.2) (2026-05-04)
 
 
