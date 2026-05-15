@@ -128,12 +128,6 @@ defmodule Lucideicons.Icon do
     Map.merge(svg_attrs, assigns)
   end
 
-  # Accept the same `class` shapes Phoenix HEEx accepts on native HTML
-  # elements: binary | list (possibly nested) | nil | false. Falsy and empty
-  # entries are dropped, lists flattened, joined with spaces. Without this,
-  # `class={[base, @flag && "extra"]}` — the standard Phoenix conditional
-  # class pattern — crashes the icon at render time when @flag is false,
-  # because Enum.join then receives a list containing `false`.
   defp normalize_class(class) when is_binary(class), do: class
 
   defp normalize_class(class) when is_list(class) do
