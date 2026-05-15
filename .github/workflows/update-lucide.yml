@@ -105,6 +105,7 @@ jobs:
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v7
         with:
+          token: ${{ secrets.PAT }}
           commit-message: |
             build: Update lucide-static from ${{ needs.check-for-updates.outputs.current_version }} to ${{ needs.check-for-updates.outputs.latest_version }}
 
