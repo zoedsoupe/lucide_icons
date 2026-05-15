@@ -73,6 +73,64 @@ defmodule LucideiconsTest do
     assert html =~ "custom-class"
   end
 
+  describe "class normalization" do
+    test "accepts a flat class list" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <Lucideicons.activity class={["h-4 w-4", "text-blue-500"]} />
+        """)
+
+      assert html =~ ~s(class="lucide lucide-activity h-4 w-4 text-blue-500")
+    end
+
+    test "drops `false` entries (Phoenix conditional-class pattern)" do
+      assigns = %{filled?: false}
+
+      html =
+        rendered_to_string(~H"""
+        <Lucideicons.heart class={["size-4", @filled? && "fill-current"]} />
+        """)
+
+      assert html =~ ~s(class="lucide lucide-heart size-4")
+      refute html =~ "false"
+    end
+
+    test "drops `nil` and empty-string entries" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <Lucideicons.heart class={["size-4", nil, ""]} />
+        """)
+
+      assert html =~ ~s(class="lucide lucide-heart size-4")
+    end
+
+    test "flattens nested lists" do
+      assigns = %{flag?: true}
+
+      html =
+        rendered_to_string(~H"""
+        <Lucideicons.heart class={[["size-4", "transition"], @flag? && "fill-current"]} />
+        """)
+
+      assert html =~ ~s(class="lucide lucide-heart size-4 transition fill-current")
+    end
+
+    test "handles nil class" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <Lucideicons.heart class={nil} />
+        """)
+
+      assert html =~ ~s(class="lucide lucide-heart")
+    end
+  end
+
   # https://github.com/zoedsoupe/lucide_icons/issues/24
   test "renders icon correctly with span element after it" do
     assigns = %{}

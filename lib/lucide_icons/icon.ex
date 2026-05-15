@@ -111,7 +111,11 @@ defmodule Lucideicons.Icon do
   end
 
   defp merge_assigns(%{class: class} = assigns, %{"class" => lucide_class} = svg_attrs) do
-    class = Enum.join([lucide_class, class], " ")
+    class =
+      [lucide_class, normalize_class(class)]
+      |> Enum.reject(&(&1 in [nil, ""]))
+      |> Enum.join(" ")
+
     assigns = Map.new(assigns, fn {k, v} -> {format_attr_key(k), v} end)
 
     svg_attrs
@@ -123,4 +127,15 @@ defmodule Lucideicons.Icon do
     assigns = Map.new(assigns, fn {k, v} -> {format_attr_key(k), v} end)
     Map.merge(svg_attrs, assigns)
   end
+
+  defp normalize_class(class) when is_binary(class), do: class
+
+  defp normalize_class(class) when is_list(class) do
+    class
+    |> List.flatten()
+    |> Enum.reject(&(&1 in [false, nil, ""]))
+    |> Enum.join(" ")
+  end
+
+  defp normalize_class(_), do: ""
 end
