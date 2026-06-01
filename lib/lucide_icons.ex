@@ -12,6 +12,8 @@ defmodule Lucideicons do
       <Lucideicons.home class="h-6 w-6" />
       <Lucideicons.arrow_right class="h-4 w-4 text-blue-500" />
       <Lucideicons.settings aria-hidden="true" />
+      <Lucideicons.render name="activity" />
+      <Lucideicons.render! name="activity" />
 
   ## Available Icons
 
@@ -48,12 +50,35 @@ defmodule Lucideicons do
     |> Enum.filter(&(&1.version == Icon.latest_version()))
 
   names = icons |> Enum.map(& &1.name) |> Enum.uniq()
+  icons_by_name = icons |> Enum.map(&{&1.name, &1}) |> Map.new()
 
   @icon_names names
+  @icons_by_name icons_by_name
 
   @doc "Returns a list of available icon names as atoms"
   @spec icon_names() :: [atom()]
   def icon_names(), do: @icon_names
+
+  @doc "Returns a map of available icon names to icons"
+  @spec icons_by_name() :: %{atom() => Lucideicons.Icon.t()}
+  def icons_by_name(), do: @icons_by_name
+
+  @doc "Returns an icon by name"
+  @spec lookup_icon(atom() | String.t()) :: {:ok, Lucideicons.Icon.t()} | {:error, :not_found}
+  def lookup_icon(name) when is_binary(name) do
+    name
+    |> String.to_existing_atom()
+    |> lookup_icon()
+  rescue
+    ArgumentError -> {:error, :not_found}
+  end
+
+  def lookup_icon(name) when is_atom(name) do
+    case Map.get(@icons_by_name, name) do
+      nil -> {:error, :not_found}
+      icon -> {:ok, icon}
+    end
+  end
 
   @doc """
   Searches for icon names that match a given pattern.
@@ -64,8 +89,8 @@ defmodule Lucideicons do
   ## Examples
 
       iex> Lucideicons.search_icons("arrow")
-      [:arrow_big_down, :arrow_big_left, :arrow_big_right, :arrow_big_up, 
-       :arrow_down, :arrow_down_left, :arrow_down_right, :arrow_left, 
+      [:arrow_big_down, :arrow_big_left, :arrow_big_right, :arrow_big_up,
+       :arrow_down, :arrow_down_left, :arrow_down_right, :arrow_left,
        :arrow_left_right, :arrow_right, :arrow_up, :arrow_up_down, ...]
 
       iex> Lucideicons.search_icons("user")
@@ -84,6 +109,57 @@ defmodule Lucideicons do
       |> String.contains?(search)
     end)
     |> Enum.sort()
+  end
+
+  @doc """
+  Renders an icon by name.
+
+  ## Examples
+
+      <Lucideicons.render name="activity" />
+      <Lucideicons.render name="activity" class="h-6 w-6" />
+      <Lucideicons.render name="activity" class="h-4 w-4 text-blue-500" aria-hidden="true" />
+
+  ## Attributes
+
+  Accepts all HTML attributes that are valid for SVG elements.
+  """
+  def render(assigns) do
+    case lookup_icon(assigns.name) do
+      {:ok, icon} ->
+        apply(__MODULE__, icon.name, [Map.delete(assigns, :name)])
+
+      {:error, :not_found} ->
+        assigns =
+          assign(assigns, :comment, Phoenix.HTML.raw("<!-- Icon #{assigns.name} not found -->"))
+
+        ~H"""
+        <%= @comment %>
+        """
+    end
+  end
+
+  @doc """
+  Renders an icon by name and raises an error if the icon is not found.
+
+  ## Examples
+
+      <Lucideicons.render! name="activity" />
+      <Lucideicons.render! name="activity" class="h-6 w-6" />
+      <Lucideicons.render! name="activity" class="h-4 w-4 text-blue-500" aria-hidden="true" />
+
+  ## Attributes
+
+  Accepts all HTML attributes that are valid for SVG elements.
+  """
+  def render!(assigns) do
+    case lookup_icon(assigns.name) do
+      {:ok, icon} ->
+        apply(__MODULE__, icon.name, [Map.delete(assigns, :name)])
+
+      {:error, :not_found} ->
+        raise "Icon #{assigns.name} not found"
+    end
   end
 
   for %Icon{name: name, file: file} <- icons do

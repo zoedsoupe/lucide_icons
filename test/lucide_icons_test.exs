@@ -155,4 +155,104 @@ defmodule LucideiconsTest do
     assert html =~ ~r/<svg[^>]*>/
     assert html =~ ~r/<span>/
   end
+
+  describe "render/1" do
+    test "renders an icon by name" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <Lucideicons.render name="activity" />
+        """)
+
+      assert html =~ "<svg"
+      assert html =~ ~s(class="lucide lucide-activity")
+    end
+
+    test "accepts a string or atom name" do
+      assigns = %{}
+
+      from_string =
+        rendered_to_string(~H"""
+        <Lucideicons.render name="activity" />
+        """)
+
+      from_atom =
+        rendered_to_string(~H"""
+        <Lucideicons.render name={:activity} />
+        """)
+
+      assert from_string == from_atom
+    end
+
+    test "does not leak the name attribute into the SVG" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <Lucideicons.render name="activity" />
+        """)
+
+      refute html =~ ~r/<svg[^>]*\sname=/
+    end
+
+    test "merges additional attributes" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <Lucideicons.render name="activity" class="h-4 w-4" aria_hidden={true} />
+        """)
+
+      assert html =~ ~s(class="lucide lucide-activity h-4 w-4")
+      assert html =~ ~s(aria-hidden="true")
+    end
+
+    test "renders a comment fallback with the name for an unknown icon without raising" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <Lucideicons.render name="this_icon_does_not_exist" />
+        """)
+
+      refute html =~ "<svg"
+      assert html =~ "<!-- Icon this_icon_does_not_exist not found -->"
+    end
+  end
+
+  describe "render!/1" do
+    test "renders an icon by name" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <Lucideicons.render! name="activity" />
+        """)
+
+      assert html =~ "<svg"
+      assert html =~ ~s(class="lucide lucide-activity")
+    end
+
+    test "does not leak the name attribute into the SVG" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <Lucideicons.render! name="activity" />
+        """)
+
+      refute html =~ ~r/<svg[^>]*\sname=/
+    end
+
+    test "raises for an unknown icon" do
+      assigns = %{}
+
+      assert_raise RuntimeError, ~r/this_icon_does_not_exist not found/, fn ->
+        rendered_to_string(~H"""
+        <Lucideicons.render! name="this_icon_does_not_exist" />
+        """)
+      end
+    end
+  end
 end
