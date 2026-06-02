@@ -130,8 +130,14 @@ defmodule Lucideicons do
         apply(__MODULE__, icon.name, [Map.delete(assigns, :name)])
 
       {:error, :not_found} ->
+        safe_name =
+          assigns.name
+          |> to_string()
+          |> Phoenix.HTML.html_escape()
+          |> Phoenix.HTML.safe_to_string()
+
         assigns =
-          assign(assigns, :comment, Phoenix.HTML.raw("<!-- Icon #{assigns.name} not found -->"))
+          assign(assigns, :comment, Phoenix.HTML.raw("<!-- Icon #{safe_name} not found -->"))
 
         ~H"""
         <%= @comment %>

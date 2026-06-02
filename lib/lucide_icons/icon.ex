@@ -34,7 +34,7 @@ defmodule Lucideicons.Icon do
 
   def latest_version, do: @lucide_static_version
 
-  @type t :: %Lucideicons.Icon{file: binary, name: atom()}
+  @type t :: %Lucideicons.Icon{file: binary, name: atom(), version: binary}
 
   @doc "Parses a SVG file and returns structured data"
   @spec parse!(Path.t()) :: Lucideicons.Icon.t()
