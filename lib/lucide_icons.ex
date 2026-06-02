@@ -49,15 +49,13 @@ defmodule Lucideicons do
     end
     |> Enum.filter(&(&1.version == Icon.latest_version()))
 
-  names = icons |> Enum.map(& &1.name) |> Enum.uniq()
   icons_by_name = icons |> Enum.map(&{&1.name, &1}) |> Map.new()
 
-  @icon_names names
   @icons_by_name icons_by_name
 
   @doc "Returns a list of available icon names as atoms"
   @spec icon_names() :: [atom()]
-  def icon_names(), do: @icon_names
+  def icon_names(), do: @icons_by_name |> Map.keys()
 
   @doc "Returns a map of available icon names to icons"
   @spec icons_by_name() :: %{atom() => Lucideicons.Icon.t()}
@@ -101,7 +99,7 @@ defmodule Lucideicons do
   def search_icons(search_term) do
     search = String.downcase(search_term)
 
-    @icon_names
+    icon_names()
     |> Enum.filter(fn icon_name ->
       icon_name
       |> to_string()
