@@ -65,6 +65,7 @@ defmodule Lucideicons do
   @spec lookup_icon(atom() | String.t()) :: {:ok, Lucideicons.Icon.t()} | {:error, :not_found}
   def lookup_icon(name) when is_binary(name) do
     name
+    |> String.replace("-", "_")
     |> String.to_existing_atom()
     |> lookup_icon()
   rescue

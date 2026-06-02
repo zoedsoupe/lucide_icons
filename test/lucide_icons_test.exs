@@ -169,6 +169,26 @@ defmodule LucideiconsTest do
       assert html =~ ~s(class="lucide lucide-activity")
     end
 
+    test "renders an icon by name with dashes or underscores in the name" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <Lucideicons.render name="alert-triangle" />
+        """)
+
+      assert html =~ "<svg"
+      assert html =~ ~s(class="lucide lucide-alert-triangle")
+
+      html =
+        rendered_to_string(~H"""
+        <Lucideicons.render name="alert_triangle" />
+        """)
+
+      assert html =~ "<svg"
+      assert html =~ ~s(class="lucide lucide-alert-triangle")
+    end
+
     test "accepts a string or atom name" do
       assigns = %{}
 
