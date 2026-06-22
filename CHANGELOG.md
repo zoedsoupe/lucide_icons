@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.2.3](https://github.com/zoedsoupe/lucide_icons/compare/v2.2.2...v2.2.3) (2026-06-22)
+
+
+### Build System
+
+* **lucide-upstream:** Update lucide-static to 1.21.0 ([#61](https://github.com/zoedsoupe/lucide_icons/issues/61)) ([8400b2b](https://github.com/zoedsoupe/lucide_icons/commit/8400b2ba11e29dd56ec2e9b8221a08d76a872026))
+
 ## [2.2.2](https://github.com/zoedsoupe/lucide_icons/compare/v2.2.1...v2.2.2) (2026-06-15)
 
 
