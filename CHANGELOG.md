@@ -1,5 +1,19 @@
 # Changelog
 
+## [2.3.0](https://github.com/zoedsoupe/lucide_icons/compare/v2.2.6...v2.3.0) (2026-07-29)
+
+
+### Features
+
+* add support for rendering an icon by name ([#58](https://github.com/zoedsoupe/lucide_icons/issues/58)) ([80c39b0](https://github.com/zoedsoupe/lucide_icons/commit/80c39b0e915f016c21cb680a8f859d903003e6e7))
+
+
+### Build System
+
+* **lucide-upstream:** Update lucide-static to 1.25.0 ([#69](https://github.com/zoedsoupe/lucide_icons/issues/69)) ([e2f1379](https://github.com/zoedsoupe/lucide_icons/commit/e2f13793c086004712a9a17641acb0f82e73f806))
+* **lucide-upstream:** Update lucide-static to 1.27.0 ([#70](https://github.com/zoedsoupe/lucide_icons/issues/70)) ([d839458](https://github.com/zoedsoupe/lucide_icons/commit/d839458eb87f550d85021ab2033f123b0b27067a))
+* Update lucide-static from 1.25.0 to 1.27.0 ([d839458](https://github.com/zoedsoupe/lucide_icons/commit/d839458eb87f550d85021ab2033f123b0b27067a))
+
 ## [2.2.6](https://github.com/zoedsoupe/lucide_icons/compare/v2.2.5...v2.2.6) (2026-07-13)
 
 
