@@ -24,12 +24,12 @@ jobs:
         uses: erlef/setup-beam@v1
         with:
           otp-version: "28.0.2"
-          elixir-version: "1.18.4"
+          elixir-version: "1.20.3"
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: "20"
+          node-version: "26.8.2"
 
       - name: Determine version
         id: version
