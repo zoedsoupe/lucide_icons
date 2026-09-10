@@ -8,7 +8,7 @@ defmodule Lucideicons.MixProject do
     [
       app: :lucide_icons,
       version: @version,
-      elixir: "~> 1.13",
+      elixir: "~> 1.18",
       start_permanent: Mix.env() == :prod,
       deps: deps(),
       docs: docs(),
@@ -26,12 +26,10 @@ defmodule Lucideicons.MixProject do
 
   defp deps do
     [
-      {:phoenix_html, "~> 4.0"},
-      {:phoenix_live_view, "~> 1.0"},
-      {:lazy_html, "~> 0.1"},
-      {:jason, "~> 1.4", optional: true},
-      {:ex_doc, "~> 0.27", only: :dev, runtime: false},
-      {:req, "~> 0.5", only: [:dev, :test], runtime: false}
+      {:phoenix_html, "~> 4.3"},
+      {:phoenix_live_view, "~> 1.2"},
+      {:ex_doc, "~> 0.40", only: :dev, runtime: false},
+      {:req, "~> 0.7", only: [:dev, :test], runtime: false}
     ]
   end
 

@@ -17,19 +17,12 @@ defmodule Lucideicons.Icon do
   @enforce_keys @fields
   defstruct @fields
 
-  @json (cond do
-           Code.ensure_loaded?(JSON) -> JSON
-           Code.ensure_loaded?(Jason) -> Jason
-           Code.ensure_loaded?(Poison) -> Poison
-           true -> raise "need a JSON library available, either JSON or Jason"
-         end)
-
   @lucide_static_version :code.priv_dir(:lucide_icons)
                          |> List.to_string()
                          |> Path.join("package-lock.json")
                          |> Path.expand()
                          |> File.read!()
-                         |> @json.decode!()
+                         |> Lucideicons.Config.json_library().decode!()
                          |> get_in(["packages", "node_modules/lucide-static", "version"])
 
   def latest_version, do: @lucide_static_version
@@ -103,11 +96,13 @@ defmodule Lucideicons.Icon do
   end
 
   defp parse_svg_attrs(svg) when is_binary(svg) do
-    svg
-    |> String.trim()
-    |> LazyHTML.from_fragment()
-    |> LazyHTML.attributes()
-    |> then(fn [attrs] -> Map.new(attrs) end)
+    # Extract just the opening <svg ...> tag to scan it safely
+    [opening_tag | _] = String.split(svg, ">", parts: 2)
+
+    # Match any key="value" pattern inside the tag
+    ~r/([a-zA-Z0-9:-]+)\s*=\s*"([^"]*)"/
+    |> Regex.scan(opening_tag)
+    |> Map.new(fn [_, key, value] -> {key, value} end)
   end
 
   defp merge_assigns(%{class: class} = assigns, %{"class" => lucide_class} = svg_attrs) do
