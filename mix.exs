@@ -20,16 +20,21 @@ defmodule Lucideicons.MixProject do
 
   def application do
     [
-      extra_applications: [:logger]
+      extra_applications: extra_applications(Mix.env())
     ]
   end
+
+  defp extra_applications(env) when env in [:dev, :test] do
+    [:inets, :ssl]
+  end
+
+  defp extra_applications(_), do: []
 
   defp deps do
     [
       {:phoenix_html, "~> 4.3"},
       {:phoenix_live_view, "~> 1.2"},
-      {:ex_doc, "~> 0.40", only: :dev, runtime: false},
-      {:req, "~> 0.7", only: [:dev, :test], runtime: false}
+      {:ex_doc, "~> 0.40", only: :dev, runtime: false}
     ]
   end
 

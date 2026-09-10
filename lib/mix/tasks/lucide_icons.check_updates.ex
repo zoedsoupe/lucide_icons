@@ -15,8 +15,6 @@ defmodule Mix.Tasks.LucideIcons.CheckUpdates do
   @shortdoc "Checks for lucide-static updates"
 
   def run(_args) do
-    Application.ensure_all_started(:req)
-
     case check_for_updates() do
       {:ok, :up_to_date, current} ->
         Mix.shell().info("Current version: v#{current}")
@@ -62,16 +60,19 @@ defmodule Mix.Tasks.LucideIcons.CheckUpdates do
   end
 
   defp fetch_latest_version do
-    url = "https://registry.npmjs.org/lucide-static/latest"
+    url = ~c"https://registry.npmjs.org/lucide-static/latest"
+    headers = [{~c"accept", ~c"application/json"}]
 
-    case Req.get(url) do
-      {:ok, %{status: 200, body: body}} ->
-        case body do
+    case :httpc.request(:get, {url, headers}, [], []) do
+      {:ok, {{_http_version, 200, _status_str}, _headers, body}} ->
+        body_string = List.to_string(body)
+
+        case Lucideicons.Config.json_library().decode!(body_string) do
           %{"version" => version} -> {:ok, version}
           _ -> {:error, "Could not parse npm registry response"}
         end
 
-      {:ok, %{status: status}} ->
+      {:ok, {{_http_version, status, _status_str}, _headers, _body}} ->
         {:error, "npm registry returned status #{status}"}
 
       {:error, reason} ->
