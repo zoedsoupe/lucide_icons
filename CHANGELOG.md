@@ -1,5 +1,25 @@
 # Changelog
 
+## [2.4.0](https://github.com/zoedsoupe/lucide_icons/compare/v2.3.3...v2.4.0) (2026-09-10)
+
+
+### Features
+
+* drop jason and lazy_html deps + bump min elixir versin to 1.18 ([8a832c6](https://github.com/zoedsoupe/lucide_icons/commit/8a832c672ee5e1ca787379a9f565f4b376a93954))
+* use httpc so can drop req dep ([f72b148](https://github.com/zoedsoupe/lucide_icons/commit/f72b148ab5c7976a1517d4f37a03d92734b36440))
+
+
+### Build System
+
+* **lucide-upstream:** Update lucide-static to 1.42.0 ([#79](https://github.com/zoedsoupe/lucide_icons/issues/79)) ([b786e8a](https://github.com/zoedsoupe/lucide_icons/commit/b786e8a71c67e7fc65434b52ef64a51dd429b41a))
+* **lucide-upstream:** Update lucide-static to 1.44.0 ([#81](https://github.com/zoedsoupe/lucide_icons/issues/81)) ([8aa971c](https://github.com/zoedsoupe/lucide_icons/commit/8aa971c79d992a9f493687721f38ffb04c954976))
+* Update lucide-static from 1.38.0 to 1.42.0 ([b786e8a](https://github.com/zoedsoupe/lucide_icons/commit/b786e8a71c67e7fc65434b52ef64a51dd429b41a))
+
+
+### Continuous Integration
+
+* bump elixir version ([de46e80](https://github.com/zoedsoupe/lucide_icons/commit/de46e80e87adb6982f4f9b76c0962f9eb420e8f3))
+
 ## [2.3.3](https://github.com/zoedsoupe/lucide_icons/compare/v2.3.2...v2.3.3) (2026-09-03)
 
 

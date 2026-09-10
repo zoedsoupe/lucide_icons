@@ -1,7 +1,7 @@
 defmodule Lucideicons.MixProject do
   use Mix.Project
 
-  @version "2.3.3"
+  @version "2.4.0"
   @github_url "https://github.com/zoedsoupe/lucide_icons"
 
   def project do
