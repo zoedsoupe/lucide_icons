@@ -1,5 +1,14 @@
 # Changelog
 
+## [2.4.1](https://github.com/zoedsoupe/lucide_icons/compare/v2.4.0...v2.4.1) (2026-09-22)
+
+
+### Build System
+
+* **lucide-upstream:** Update lucide-static to 1.46.0 ([#82](https://github.com/zoedsoupe/lucide_icons/issues/82)) ([b7a86ba](https://github.com/zoedsoupe/lucide_icons/commit/b7a86ba90e1d5a2de542ed88a920024801444274))
+* **lucide-upstream:** Update lucide-static to 1.47.0 ([#84](https://github.com/zoedsoupe/lucide_icons/issues/84)) ([0702f55](https://github.com/zoedsoupe/lucide_icons/commit/0702f5584f1c6358057e0ee0fb7c06fe5f44246c))
+* Update lucide-static from 1.46.0 to 1.47.0 ([0702f55](https://github.com/zoedsoupe/lucide_icons/commit/0702f5584f1c6358057e0ee0fb7c06fe5f44246c))
+
 ## [2.4.0](https://github.com/zoedsoupe/lucide_icons/compare/v2.3.3...v2.4.0) (2026-09-10)
 
 
