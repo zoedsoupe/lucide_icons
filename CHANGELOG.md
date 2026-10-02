@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.4.3](https://github.com/zoedsoupe/lucide_icons/compare/v2.4.2...v2.4.3) (2026-10-02)
+
+
+### Bug Fixes
+
+* vendor all lucide-static icons, un-ignore icons dir ([#88](https://github.com/zoedsoupe/lucide_icons/issues/88)) ([65874dd](https://github.com/zoedsoupe/lucide_icons/commit/65874dda8d6b45738f453576fe966ef3c0815570))
+
 ## [2.4.2](https://github.com/zoedsoupe/lucide_icons/compare/v2.4.1...v2.4.2) (2026-09-30)
 
 
