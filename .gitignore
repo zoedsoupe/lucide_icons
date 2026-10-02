@@ -25,7 +25,12 @@ lucide_icons-*.tar
 # Temporary files, for example, from tests.
 /tmp/
 
-/priv/node_modules/
+# npm deps are not tracked, except the vendored lucide-static icons
+# (the Hex package and compile-time generation need them).
+/priv/node_modules/*
+!/priv/node_modules/lucide-static/
+/priv/node_modules/lucide-static/*
+!/priv/node_modules/lucide-static/icons/
 
 .env
 
